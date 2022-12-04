@@ -100,3 +100,23 @@ const getEmployee = () => {
     start();
   });
 };
+
+const addDepartment = () => {
+  inquirer
+    .prompt({
+      name: "name",
+      type: "input",
+      message: "Enter new department.",
+    })
+    .then(function (res) {
+      db.query(
+        "INSERT INTO department SET ?",
+        { name: res.department },
+        function (err) {
+          if (err) throw err;
+          console.log("You have successfully added this department!");
+          start();
+        }
+      );
+    });
+};

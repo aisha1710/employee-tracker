@@ -156,3 +156,45 @@ const addRole = () => {
       );
     });
 };
+
+const addEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "Enter employee's first name.",
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "Enter employee's last name.",
+      },
+      {
+        type: "input",
+        name: "role_id",
+        message: "Enter the employee's role id.",
+      },
+      {
+        type: "input",
+        name: "manager_id",
+        message: "Enter the employee's manager id.",
+      },
+    ])
+    .then(function (res) {
+      db.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: res.first_name,
+          last_name: res.last_name,
+          role_id: res.role_id || 0,
+          manager_id: res.manager_id || 0,
+        },
+        function (err) {
+          if (err) throw err;
+          console.log("You have successfully added this employee!");
+          start();
+        }
+      );
+    });
+};

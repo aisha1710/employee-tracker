@@ -120,3 +120,39 @@ const addDepartment = () => {
       );
     });
 };
+
+const addRole = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "Please enter the role's title.",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "Enter new role's salary.",
+      },
+      {
+        type: "input",
+        name: "department",
+        message: "Enter department id.",
+      },
+    ])
+    .then(function (res) {
+      db.query(
+        "INSERT INTO role SET ?",
+        {
+          title: res.title,
+          salary: res.salary || 0,
+          department: res.department || 0,
+        },
+        function (err) {
+          if (err) throw err;
+          console.log("Role successfully added!");
+          start();
+        }
+      );
+    });
+};

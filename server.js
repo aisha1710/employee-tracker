@@ -111,7 +111,7 @@ const addDepartment = () => {
     .then(function (res) {
       db.query(
         "INSERT INTO department SET ?",
-        { name: res.department },
+        { name: res.name },
         function (err) {
           if (err) throw err;
           console.log("You have successfully added this department!");
@@ -136,7 +136,7 @@ const addRole = () => {
       },
       {
         type: "input",
-        name: "department",
+        name: "department_id",
         message: "Enter department id.",
       },
     ])
@@ -146,7 +146,7 @@ const addRole = () => {
         {
           title: res.title,
           salary: res.salary || 0,
-          department: res.department || 0,
+          department_id: res.department_id || 0,
         },
         function (err) {
           if (err) throw err;
@@ -198,3 +198,55 @@ const addEmployee = () => {
       );
     });
 };
+
+updateEmployee = () => {
+  db.query("SELECT * FROM employee", function (err, res) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "lastName",
+          message: "Which employee's role do you want to update?",
+          choices: function () {
+            var lastName = [];
+            for (var i = 0; i < res.length; i++) {
+              lastName.push(res[i].last_name);
+            }
+            return lastName;
+          },
+        },
+      ])
+      .then(function (res) {
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "role",
+              message: "Enter employee's new role id number",
+            },
+          ])
+          .then(function (val) {
+            db.query("UPDATE employee SET role_id = ? WHERE last_name = ?", [
+              val.role,
+              res.lastName,
+            ]);
+            console.log("Employee successfully updated!");
+            start();
+          });
+      });
+  });
+};
+
+const exit = () => {
+  console.log("Completed!");
+  db.end();
+};
+
+app.use((req, res) => {
+  res.status(404).end();
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

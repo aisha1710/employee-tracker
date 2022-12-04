@@ -2,7 +2,6 @@ const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const express = require("express");
 const { consoleTable } = require("console.table");
-const { printTable } = require("console-table-printer");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,7 +13,7 @@ const db = mysql.createConnection({
   host: "127.0.0.1",
   user: "root",
   password: "",
-  database: "employee_db",
+  database: "employee_DB",
 });
 
 db.connect((err) => {
@@ -26,13 +25,13 @@ db.connect((err) => {
 function start() {
   inquirer
     .prompt({
-      name: "action",
+      name: "choices",
       type: "list",
       message: "What would you like to do?",
       choices: [
-        "View All Employees",
         "View All Departments",
         "View All Roles",
+        "View All Employees",
         "Add Employee",
         "Add Department",
         "Add Roles",
@@ -41,18 +40,18 @@ function start() {
       ],
     })
 
-    .then(function (answer) {
-      switch (answer.action) {
-        case "View All Employees":
-          viewEmployee();
-          break;
-
+    .then(function (value) {
+      switch (value.choices) {
         case "View All Departments":
-          viewDepartment();
+          getDepartment();
           break;
 
         case "View All Roles":
-          viewRole();
+          getRole();
+          break;
+
+        case "View All Employees":
+          getEmployee();
           break;
 
         case "Add Employee":
@@ -77,3 +76,27 @@ function start() {
       }
     });
 }
+
+const getDepartment = () => {
+  db.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
+
+const getRole = () => {
+  db.query("SELECT * FROM role", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
+
+const getEmployee = () => {
+  db.query("SELECT * FROM employee", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
